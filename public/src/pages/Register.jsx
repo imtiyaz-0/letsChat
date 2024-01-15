@@ -4,6 +4,8 @@ import styled from "styled-components";
 import Logo from '../assets/logo.svg';
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
+import { registerRoute } from '../utils/APIRoutes';
 
 
 function Register() {
@@ -21,10 +23,18 @@ function Register() {
     confirmPassword: "",
 
   });
-  const handleSubmit=(event)=>{
+  const handleSubmit= async(event)=>{
     event.preventDefault();
-    handleValidation();
-  }
+    if(handleValidation()){
+      console.log("in Validation" , registerRoute);
+      const { password, confirmPassword, username, email } = values;
+      const {data} = await axios.post(registerRoute,{
+        username,
+        email,
+        password,
+      });
+    }
+    }
  
   const handleValidation = () => {
     const { password, confirmPassword, username, email } = values;
