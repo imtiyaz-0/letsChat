@@ -60,3 +60,20 @@ module.exports.register= async (req,res,next)=>{
       next(ex);
     }
  };
+
+ module.exports.getAllUsers = async (req,res,next)=>{
+    try{
+      const users = (await User.find({_id: {$ne:req.params.id}})).select([
+         "email",
+         "username",
+         "avtarImage",
+         "_id",
+      ]);
+      return res.json(users);
+
+    }
+    catch(ex){
+        next(ex);
+    }
+
+ }; 
