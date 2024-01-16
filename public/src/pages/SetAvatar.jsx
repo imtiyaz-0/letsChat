@@ -9,7 +9,7 @@ import { setAvatarRoute } from '../utils/APIRoutes';
 import { Buffer } from 'buffer';
 
 function SetAvatar() {
-    const api= "http://api.multiavatar.com/45678945";
+    const api= `https://api.multiavatar.com/45678945`;
     const navigate = useNavigate();
     const [avatars , setAvatars] = useState([]);
     const [isLoading , setIsLoading] = useState(true);
@@ -51,21 +51,21 @@ function SetAvatar() {
     <div className="title-container">
         <h1>Pick an avatar as your profile picture</h1>
     </div>
-    <div className="avatars">{
-        avatars.map((avatar,index)=>{
-            return(
-                <div 
-                key={index}
-                className  = {`avatar ${
-                    selectedAvatar===index? "selected":""
-                }`}
+    <div className="avatars">
+            {avatars.map((avatar, index) => {
+              return (
+                <div
+                  className={`avatar ${
+                    selectedAvatar === index ? "selected" : ""
+                  }`}
                 >
-                 <img
-                 src={`data:image/svg+xml;base64 , ${avatar}`}
-                 alt='avatar'
-                 onClick={()=>setSelectedAvatar(index)}
-                 />
-                 </div>
+                  <img
+                    src={`data:image/svg+xml;base64,${avatar}`}
+                    alt="avatar"
+                    key={avatar}
+                    onClick={() => setSelectedAvatar(index)}
+                  />
+                </div>
             )
         })
     }
