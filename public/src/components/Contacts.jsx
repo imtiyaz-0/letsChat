@@ -2,18 +2,24 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Logo from "../assets/logo.svg";
 
-export default function Contacts({ contacts, changeChat }) {
+export default function Contacts({ contacts, currentUser }) {
   const [currentUserName, setCurrentUserName] = useState(undefined);
   const [currentUserImage, setCurrentUserImage] = useState(undefined);
   const [currentSelected, setCurrentSelected] = useState(undefined);
-  useEffect(async () => {
 
-    setCurrentUserName(data.username);
-    setCurrentUserImage(data.avatarImage);
-  }, []);
+
+  useEffect( () => {
+    const checkUser = async () => {
+    if(currentUser){
+    setCurrentUserName(currentUser.username);
+    setCurrentUserImage(currentUser.avatarImage)
+    ;}}
+    checkUser();
+    }, [currentUser]);
+
+
   const changeCurrentChat = (index, contact) => {
-    setCurrentSelected(index);
-    changeChat(contact);
+   
   };
   return (
     <>

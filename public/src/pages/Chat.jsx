@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
 import Contacts from "../components/Contacts";
+import { allUsersRoute } from '../utils/APIRoutes';
 
 function Chat() {
   const navigate = useNavigate();
@@ -22,7 +23,8 @@ function Chat() {
     checkUSer();
   }, []);
 
-  useEffect(async () => {
+  useEffect( () => {
+    const checkUSer =async()=>{
     if (currentUser) {
       if (currentUser.isAvatarImageSet) {
         const data = await axios.get(`${allUsersRoute}/${currentUser._id}`);
@@ -30,22 +32,16 @@ function Chat() {
       } else {
         navigate("/setAvatar");
       }
-    }
+    }}
+    checkUSer();
   }, [currentUser]);
 
-  const handleChatChange = (chat) => {
-    setCurrentChat(chat);
-  };
+  
 
   return (
     <Container>
     <div className="container">
-    <Contacts contacts={contacts} changeChat={handleChatChange} />
-          {currentChat === undefined ? (
-            <Welcome />
-          ) : (
-            <ChatContainer currentChat={currentChat} socket={socket} />
-          )}
+    <Contacts contacts={contacts}/>
     </div>
     </Container>
   )
