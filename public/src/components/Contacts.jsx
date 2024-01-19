@@ -9,10 +9,11 @@ export default function Contacts({ contacts, currentUser }) {
 
 
   useEffect( () => {
+    console.log(contacts);
     const checkUser = async () => {
     if(currentUser){
+      setCurrentUserImage(currentUser.avatarImage)
     setCurrentUserName(currentUser.username);
-    setCurrentUserImage(currentUser.avatarImage)
     ;}}
     checkUser();
     }, [currentUser]);

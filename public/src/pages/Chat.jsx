@@ -23,18 +23,18 @@ function Chat() {
     checkUSer();
   }, []);
 
-  useEffect( () => {
-    const checkUSer =async()=>{
-    if (currentUser) {
-      if (currentUser.isAvatarImageSet) {
-        const data = await axios.get(`${allUsersRoute}/${currentUser._id}`);
-        setContacts(data.data);
-      } else {
-        navigate("/setAvatar");
-      }
-    }}
-    checkUSer();
-  }, [currentUser]);
+  // useEffect( () => {
+  //   const checkUSer =async()=>{
+  //   if (currentUser) {
+  //     if (currentUser.isAvatarImageSet) {
+  //       const data = await axios.get(`${allUsersRoute}/${currentUser._id}`);
+  //       setContacts(data.data);
+  //     } else {
+  //       navigate("/setAvatar");
+  //     }
+  //   }}
+  //   checkUSer();
+  // }, [currentUser]);
 
   
 
