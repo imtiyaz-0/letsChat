@@ -1,67 +1,90 @@
-import React , {useEffect,useState} from 'react';
-import styled from 'styled-components';
-import axios from 'axios';
-import {useNavigate} from 'react-router-dom';
+import React, { useEffect, useState, useRef } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
+import styled from "styled-components";
+import { allUsersRoute, host } from "../utils/APIRoutes";
+import ChatContainer from "../components/ChatContainer";
 import Contacts from "../components/Contacts";
-import { allUsersRoute } from '../utils/APIRoutes';
-import Welcome from '../components/Welcome';
-import ChatContainer from '../components/ChatContainer';
+import Welcome from "../components/Welcome";
 
-function Chat() {
+export default function Chat() {
   const navigate = useNavigate();
-  const [contacts , setContacts] = useState([]);
-  const [currentUser, setCurrentUser] = useState([]);
-  const [currentChat, setCurrentChat] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  useEffect( () => {
-    const checkUSer =async()=>{
-    if (!localStorage.getItem('chat-app-user')) {
-      navigate("/login");
-    } else {
-      setCurrentUser(
-        await JSON.parse(
-          localStorage.getItem('chat-app-user')
-        )
-      );
-      setIsLoaded(true);
-    }}
-    checkUSer();
+  const socket = useRef();
+  const [contacts, setContacts] = useState([]);
+  const [currentChat, setCurrentChat] = useState(undefined);
+  const [currentUser, setCurrentUser] = useState(undefined);
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+        navigate("/login");
+      } else {
+        const storedUser = await JSON.parse(
+          localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)
+        );
+        setCurrentUser(storedUser);
+      }
+    };
+  
+    fetchData(); 
+  
   }, []);
-
-  // useEffect( () => {
-  //   const checkUSer =async()=>{
-  //   if (currentUser) {
-  //     if (currentUser.isAvatarImageSet) {
-  //       const data = await axios.get(`${allUsersRoute}/${currentUser._id}`);
-  //       setContacts(data.data);
-  //     } else {
-  //       navigate("/setAvatar");
-  //     }
-  //   }}
-  //   checkUSer();
-  // }, [currentUser]);
-
-const handleChatChange = (chat)=>{
-   setCurrentChat(chat);
-}
-
+  
+  
+  useEffect(() => {
+    const connectToSocket = () => {
+      if (currentUser) {
+        socket.current = io(host);
+        socket.current.emit("add-user", currentUser._id);
+      }
+    };
+  
+    connectToSocket(); 
+  
+  }, [currentUser]);
+  
+  
+  useEffect(() => {
+    const fetchContacts = async () => {
+      if (currentUser) {
+        if (currentUser.isAvatarImageSet) {
+          try {
+            const { data } = await axios.get(`${allUsersRoute}/${currentUser._id}`);
+            setContacts(data);
+          } catch (error) {
+            console.error("Error fetching contacts:", error);
+          }
+        } else {
+          navigate("/setAvatar");
+        }
+      }
+    };
+  
+    fetchContacts();
+  
+  }, [currentUser]);
+  
+  const handleChatChange = (chat) => {
+    setCurrentChat(chat);
+  };
   return (
-    <Container>
-    <div className="container">
-    <Contacts contacts={contacts} currentUser={currentUser} />
-
-    {isLoaded && currentChat===undefined ?(
-      <Welcome currentUser={currentUser} />
-    ):(<ChatContainer currentChat={currentChat}/>)}
-   
-    </div>
-    </Container>
-  )
+    <>
+      <Container>
+        <div className="container">
+          <Contacts contacts={contacts} changeChat={handleChatChange} />
+          {currentChat === undefined ? (
+            <Welcome />
+          ) : (
+            <ChatContainer currentChat={currentChat} socket={socket} />
+          )}
+        </div>
+      </Container>
+    </>
+  );
 }
 
 const Container = styled.div`
-height: 100vh;
+  height: 100vh;
   width: 100vw;
   display: flex;
   flex-direction: column;
@@ -80,6 +103,3 @@ height: 100vh;
     }
   }
 `;
-
-
-export default Chat

@@ -21,10 +21,21 @@ export default function SetAvatar() {
     theme: "dark",
   };
 
-  useEffect(async () => {
-    if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY))
-      navigate("/login");
-  }, []);
+    useEffect(() => {
+      const checkLocalStorage = async () => {
+        try {
+          if (!localStorage.getItem(process.env.REACT_APP_LOCALHOST_KEY)) {
+            navigate("/login");
+          }
+         
+        } catch (error) {
+          console.error('Error checking local storage:', error);
+        }
+      };
+  
+      checkLocalStorage(); 
+  
+    }, []); 
 
   const setProfilePicture = async () => {
     if (selectedAvatar === undefined) {
@@ -51,19 +62,28 @@ export default function SetAvatar() {
       }
     }
   };
-
-  useEffect(async () => {
-    const data = [];
-    for (let i = 0; i < 4; i++) {
-      const image = await axios.get(
-        `${api}/${Math.round(Math.random() * 1000)}`
-      );
-      const buffer = new Buffer(image.data);
-      data.push(buffer.toString("base64"));
-    }
-    setAvatars(data);
-    setIsLoading(false);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = [];
+        for (let i = 0; i < 4; i++) {
+          const image = await axios.get(
+            `${api}/${Math.round(Math.random() * 1000)}`
+          );
+          const buffer = new Buffer(image.data);
+          data.push(buffer.toString("base64"));
+        }
+        setAvatars(data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setIsLoading(false); 
+      }
+    };
+  
+    fetchData();
   }, []);
+  
   return (
     <>
       {isLoading ? (
