@@ -24,7 +24,7 @@ function ChatContainer({currentchat}) {
       </div>
       <Logout/>
      </div>
-     <div className="chat-messages"></div>
+     <Messages />
      <ChatInput handleSendMsg={handleSendmsg} />
     </Container>
     )}
